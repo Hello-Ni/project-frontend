@@ -3,13 +3,25 @@ import React,{ useState } from 'react';
 import { StyleSheet, Text,Button, TextInput, View,TouchableWithoutFeedback,TouchableOpacity,Keyboard,ImageBackground } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons'; 
 import { AntDesign } from '@expo/vector-icons'; 
+import {axios,base} from '../axios'
 export default function App({navigation}) {
     const [buttonType,setButtonType]=useState([
 
     ]);
-    const pressHandler=()=>{
-        console.log("press")
-        navigation.push("MapWindow")
+    const pressHandler=async(screen)=>{
+      switch(screen){
+        case "map":
+          await axios.post(`${base}/maps/create`);
+          navigation.push("MapWindow")
+          break;
+        case "adopt":
+          navigation.push("AdoptWindow")
+          break;
+        case "register":
+          navigation.push("RegisterWindow")
+          break; 
+      }
+        
     };
     
     return ( 
@@ -19,15 +31,15 @@ export default function App({navigation}) {
             <ImageBackground source={require('../../assets/background.png')} style={styles.container}>
                <View style={styles.imageBox}></View>
                     <View style={styles.content}>
-                      <TouchableOpacity   style={styles.iconBox} onPress={()=> pressHandler()}>
+                      <TouchableOpacity   style={styles.iconBox} onPress={()=> pressHandler("map")}>
                           <FontAwesome5 name="map-marker-alt" size={50} color="black" />
                           <Text>地圖搜尋</Text>     
                       </TouchableOpacity>
-                      <TouchableOpacity style={styles.iconBox} onPress={()=> pressHandler()}>
+                      <TouchableOpacity style={styles.iconBox} onPress={()=> pressHandler("adopt")}>
                           <FontAwesome5 name="dog" size={50} color="black" />
                           <Text>寵物領養</Text>     
                       </TouchableOpacity>
-                      <TouchableOpacity style={styles.iconBox} onPress={()=> pressHandler()}>
+                      <TouchableOpacity style={styles.iconBox} onPress={()=> pressHandler("register")}>
                       <AntDesign name="pushpin" size={50} color="black" />
                           <Text>登記走失</Text>     
                       </TouchableOpacity>

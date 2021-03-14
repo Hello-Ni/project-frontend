@@ -5,9 +5,10 @@ import Geocoder from 'react-native-geocoding';
 import MapView, { Marker } from 'react-native-maps';
 import {base, axios} from '../axios'
 
-export default function App({navigation}) {
+export default function MapWindow({navigation}) {
     Geocoder.init("AIzaSyDonjbD-iLIzfrKhky6ESfjfTtxso5vJG0"); // use a valid API key
     const [address,setAddress]=useState("")
+    const [distance,setDistance]=useState(0);
     const [inputLoc,setInputLoc]=useState(
       {
        latitude:22.997800066043517,
@@ -20,19 +21,27 @@ export default function App({navigation}) {
         navigation.push*("MainWindow")
     }
     const testHandler=async()=>{
-      let region=calculateRectangle(2);
-      console.log(region)
+      let region=calculateRectangle(distance);
+      //console.log(region)
       let res=await axios.post(`${base}/maps/search`,region);
-      console.log(res.data.data)
+      //console.log(res.data.data)
       setMarkers(res.data.data)
     }
     const submitHandler=async()=>{
-      Geocoder.from(address)
-      .then(json => {
-        var location = json.results[0].geometry.location;
-        console.log(location);
-      })
-      .catch(error => console.warn(error));
+      if(address!==""){
+        await Geocoder.from(address)
+        .then(async (json) => {
+          var seachLoc = json.results[0].geometry.location;
+          let Loc={latitude:seachLoc.lat,longitude:seachLoc.lng,latitudeDelta:0.02,longitudeDelta:0.02};
+          setInputLoc(Loc)
+          let region=calculateRectangle(distance);
+          console.log(region)
+          let res=await axios.post(`${base}/maps/search`,region);
+          setMarkers(res.data.data)
+
+        })
+        .catch(error => console.warn(error));
+      }
     }
     const calculateRectangle=(distance)=>{
       let radius = 6371;
@@ -57,6 +66,7 @@ export default function App({navigation}) {
       <View style={styles.container}>
         <MapView
           region={inputLoc}
+          camera={inputLoc}
           onRegionChange={(region)=>{setInputLoc(region)}}
           style={styles.map}
         >
@@ -64,8 +74,8 @@ export default function App({navigation}) {
             <Marker
               key={index}
               coordinate={{latitude:marker.lat,longitude:marker.lng}}
-              title="sex"
-              description="hey baby"
+              title={marker.type}
+              description={marker.number.toString()}
             />
           ))}
         </MapView>
@@ -75,6 +85,11 @@ export default function App({navigation}) {
             onChangeText={(val)=>{setAddress(val)}}
             onSubmitEditing={testHandler}
             value={address}       
+          ></TextInput>
+          <TextInput
+          placeholder="搜尋半徑"
+          onChangeText={(val)=>{setDistance(val)}}
+          value={distance}       
           ></TextInput>
           <Button
           onPress={testHandler}
