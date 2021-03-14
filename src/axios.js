@@ -1,10 +1,11 @@
 import axios from 'axios';
-var base = 'http://localhost:8000';
+var base = 'https://6e6ecc5053d5.ngrok.io';
 axios.interceptors.response.use(
   response => {
     return response;
   },
   error => {
+    console.log(error)
     switch (error.response.status) {
       case 401:
         break;
