@@ -8,13 +8,13 @@ import {base, axios} from '../axios'
 export default function MapWindow({navigation}) {
     Geocoder.init("AIzaSyDonjbD-iLIzfrKhky6ESfjfTtxso5vJG0"); // use a valid API key
     const [address,setAddress]=useState("")
-    const [distance,setDistance]=useState(0);
+    const [distance,setDistance]=useState('1.5');
     const [inputLoc,setInputLoc]=useState(
       {
        latitude:22.997800066043517,
        longitude:120.20266576552974,
-       latitudeDelta: 0.05,
-       longitudeDelta: 0.05,
+       latitudeDelta: 0.02,
+       longitudeDelta: 0.02,
       });
     const [markers,setMarkers]=useState([]);
     const pressHandler=()=>{
@@ -24,9 +24,10 @@ export default function MapWindow({navigation}) {
       let region=calculateRectangle(distance);
       //console.log(region)
       let res=await axios.post(`${base}/maps/search`,region);
-      //console.log(res.data.data)
+      console.log(res.data.data)
       setMarkers(res.data.data)
     }
+    
     const submitHandler=async()=>{
       if(address!==""){
         await Geocoder.from(address)
@@ -34,7 +35,7 @@ export default function MapWindow({navigation}) {
           var seachLoc = json.results[0].geometry.location;
           let Loc={latitude:seachLoc.lat,longitude:seachLoc.lng,latitudeDelta:0.02,longitudeDelta:0.02};
           setInputLoc(Loc)
-          let region=calculateRectangle(distance);
+          let region=calculateRectangle(parseFloat(distance));
           console.log(region)
           let res=await axios.post(`${base}/maps/search`,region);
           setMarkers(res.data.data)
@@ -43,6 +44,7 @@ export default function MapWindow({navigation}) {
         .catch(error => console.warn(error));
       }
     }
+    
     const calculateRectangle=(distance)=>{
       let radius = 6371;
       let dis = distance;
@@ -59,15 +61,15 @@ export default function MapWindow({navigation}) {
       }
       return rectangle
     }
+    const selectAnimalView=()=>{}
     return (  
     <TouchableWithoutFeedback onPress={()=>{
-      Keyboard.dismiss();
+      Keyboard.dismiss(); 
     }}>
       <View style={styles.container}>
         <MapView
           region={inputLoc}
-          camera={inputLoc}
-          onRegionChange={(region)=>{setInputLoc(region)}}
+          showsUserLocation={true}
           style={styles.map}
         >
           {markers.map((marker,index)=>(
@@ -76,9 +78,16 @@ export default function MapWindow({navigation}) {
               coordinate={{latitude:marker.lat,longitude:marker.lng}}
               title={marker.type}
               description={marker.number.toString()}
-            />
+              onPress={()=>{console.log(index)}}
+              isPreselected={true}
+            >
+
+            </Marker>
           ))}
         </MapView>
+        <View style={styles.showBox} >
+          
+        </View>
         <View style={styles.inputBox}>
           <TextInput
             placeholder="請輸入地點"
@@ -89,12 +98,12 @@ export default function MapWindow({navigation}) {
           <TextInput
           placeholder="搜尋半徑"
           onChangeText={(val)=>{setDistance(val)}}
+          onSubmitEditing={testHandler}
           value={distance}       
           ></TextInput>
-          <Button
-          onPress={testHandler}
-          title="submit"
-          ></Button>
+        </View>
+        <View style={styles.detailBox}>
+
         </View>
       </View>
     </TouchableWithoutFeedback>
@@ -109,11 +118,25 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   map:{
-    flex:4,
+    flex:1,
     width:'100%',
 
   },
   inputBox:{
-    flex:3,
-  }
+    position:'absolute',
+    width:'90%',
+    height:'7%',
+    margin:20,
+    top:0,
+    borderRadius:30,
+    backgroundColor:'#fff'
+  },
+  detailBox:{
+    position:'absolute',
+    backgroundColor:'#fff',
+    width:'100%',
+    height:'30%',
+    bottom:0
+
+  },
 });

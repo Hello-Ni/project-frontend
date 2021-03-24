@@ -2,16 +2,18 @@ import { StatusBar } from 'expo-status-bar';
 import React,{ useState } from 'react';
 import { StyleSheet, Text,Button, TextInput, View,TouchableWithoutFeedback,TouchableOpacity,Keyboard,ImageBackground } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons'; 
-import { AntDesign } from '@expo/vector-icons'; 
+import { AntDesign } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons'
+import { Ionicons } from '@expo/vector-icons'; 
 import {axios,base} from '../axios'
 export default function App({navigation}) {
     const [buttonType,setButtonType]=useState([
-
+      
     ]);
     const pressHandler=async(screen)=>{
       switch(screen){
         case "map":
-          await axios.post(`${base}/maps/create`);
+          //await axios.post(`${base}/maps/create`);
           navigation.push("MapWindow")
           break;
         case "adopt":
@@ -44,9 +46,13 @@ export default function App({navigation}) {
                           <Text>登記走失</Text>     
                       </TouchableOpacity>
                       <TouchableOpacity style={styles.iconBox} onPress={()=> pressHandler()}>
-                          <FontAwesome5 name="question" size={50} color="black" />
-                          <Text>待開發</Text>     
-                      </TouchableOpacity>               
+                          <MaterialCommunityIcons name="comment-search" size={50} color="black" />
+                          <Text>文章搜尋</Text>     
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.iconBox} onPress={()=> pressHandler()}>
+                        <Ionicons name="person" size={50} color="black" />
+                          <Text>個人資料</Text>     
+                      </TouchableOpacity>
                     </View> 
                 
             </ImageBackground>
@@ -64,18 +70,23 @@ const styles = StyleSheet.create({
   },
   imageBox:{
     flex:1,
+    flexWrap:'wrap',
   },
   iconBox:{
     flex:1,
-    //backgroundColor:'red',
-    alignItems:'center'
+    alignItems:'center',
+    //borderColor:'red',
+    //borderWidth:1,
+    minWidth:'25%',
+    maxWidth:'25%',
+    padding:10
   },
   content:{
     flex:1,
     flexDirection:'row',
     flexWrap:'wrap',
-    justifyContent: 'space-evenly',
-    padding:10,
-    //borderStartColor:'yellow'
+    justifyContent: 'flex-start',
+    //padding:10,
+    //backgroundColor:'yellow'
   }
 });

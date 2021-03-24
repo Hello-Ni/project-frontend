@@ -1,5 +1,5 @@
 import axios from 'axios';
-var base = 'https://5680b1daefb3.ngrok.io';
+var base = 'http://8a80770c4c7f.ngrok.io';
 axios.interceptors.response.use(
   response => {
     return response;

@@ -3,6 +3,7 @@ import { createStackNavigator } from 'react-navigation-stack';
 import MainWindow from '../screens/MainScreen'
 import MapWindow from '../screens/MapScreen'
 import AdoptWindow from '../screens/AdoptScreen'
+import RegisterWindow from '../screens/RegisterWindow'
 const screens={
     MainWindow:{
         screen:MainWindow,
@@ -27,6 +28,14 @@ const screens={
             title:'AdoptWindow',
             headerStyle:{backgroundColor: 'coral',},
             headerTintColor: '#fff',
+        }
+    },
+    RegisterWindow:{
+        screen:RegisterWindow,
+        navigationOptions:{
+            title:'RegisterWindow',
+            headerStyle:{backgroundColor:'coral'},
+            headerTintColor:'#fff'
         }
     }
 
