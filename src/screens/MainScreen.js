@@ -13,7 +13,7 @@ export default function App({navigation}) {
     const pressHandler=async(screen)=>{
       switch(screen){
         case "map":
-          //await axios.post(`${base}/maps/create`);
+          
           navigation.push("MapWindow")
           break;
         case "adopt":
@@ -21,7 +21,11 @@ export default function App({navigation}) {
           break;
         case "register":
           navigation.push("RegisterWindow")
-          break; 
+          break;
+        default:
+          //reset all data
+          await axios.post(`${base}/maps/create`);
+          break;
       }
         
     };
