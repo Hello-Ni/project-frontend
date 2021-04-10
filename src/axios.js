@@ -1,33 +1,32 @@
-import axios from 'axios';
-var base = 'https://210c757e6a79.ngrok.io';
+import axios from "axios";
+var base = "https://680e2289aad2.ngrok.io";
 axios.interceptors.response.use(
-  response => {
+  (response) => {
     return response;
   },
-  error => {
-    console.log(error)
+  (error) => {
+    console.log(error);
     switch (error.response.status) {
       case 401:
         break;
     }
     return Promise.reject(error);
-  },
+  }
 );
 
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
-axios.defaults.headers.get['Content-Type'] = 'application/x-www-form-urlencoded';
+axios.defaults.headers.post["Content-Type"] =
+  "application/x-www-form-urlencoded";
+axios.defaults.headers.get["Content-Type"] =
+  "application/x-www-form-urlencoded";
 axios.defaults.withCredentials = true;
 axios.defaults.transformRequest = [
   function (data) {
-    let ret = '';
+    let ret = "";
     for (let it in data) {
-      ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&';
+      ret += encodeURIComponent(it) + "=" + encodeURIComponent(data[it]) + "&";
     }
     return ret;
   },
 ];
 
-export {
-  axios,
-  base
-};
+export { axios, base };

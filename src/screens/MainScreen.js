@@ -13,7 +13,6 @@ export default function App({navigation}) {
     const pressHandler=async(screen)=>{
       switch(screen){
         case "map":
-          
           navigation.push("MapWindow")
           break;
         case "adopt":

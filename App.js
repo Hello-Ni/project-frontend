@@ -1,25 +1,29 @@
-import { StatusBar } from 'expo-status-bar';
-import React,{useSate} from 'react';
-import { StyleSheet, Text, TextInput, View,TouchableWithoutFeedback,Keyboard } from 'react-native';
+import { StatusBar } from "expo-status-bar";
+import React, { useSate } from "react";
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native";
 import Header from "./src/components/header";
-import AddTodo from "./src/components/addTodo"
-import Navigator from './src/router/homeStack'
+import AddTodo from "./src/components/addTodo";
+import Navigator from "./src/router/homeStack";
 export default function App() {
-  return (
-    
-    <Navigator/>
-  );
+  return <Navigator />;
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
-  content:{
-    flex:2,
-    padding:40,
-  }
+  content: {
+    flex: 2,
+    padding: 40,
+  },
 });
