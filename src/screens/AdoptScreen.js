@@ -1,32 +1,51 @@
-import { StatusBar } from 'expo-status-bar';
-import React,{ useState } from 'react';
-import { StyleSheet, Text,Button, TextInput, View,TouchableWithoutFeedback,TouchableOpacity,Keyboard,ImageBackground } from 'react-native';
-import {axios,base} from '../axios'
-export default function AdoptScreen({navigation}) {
-    const sendAnimal=async()=>{
-      let animal={name:"john",feature:"白毛",type:"dog"}
-      await axios.post(`${base}/adopt/findAnimal`,animal)
-    }
-    return ( 
-        <TouchableWithoutFeedback  onPress={()=>{
-        Keyboard.dismiss();
-        }}>
-            <ImageBackground source={require('../../assets/background.png')} style={styles.container}>
-              <Button
-              onPress={sendAnimal}
-              title="test"
-              ></Button>
-            </ImageBackground>
-        </TouchableWithoutFeedback>
+import { StatusBar } from "expo-status-bar";
+import React, { useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  Button,
+  TextInput,
+  View,
+  TouchableWithoutFeedback,
+  TouchableOpacity,
+  Keyboard,
+  ImageBackground,
+} from "react-native";
+import { axios, base } from "../axios";
+import RecommendPanel from "../components/panel/RecommendPanel";
+import AnimalPanel from "../components/panel/AnimalPanel";
+
+export default function AdoptScreen({ navigation }) {
+  const sendAnimal = async () => {
+    await axios.get(
+      "http://data.coa.gov.tw/Service/OpenData/TransService.aspx?UnitId=QcbUEzN6E6DL"
     );
+    //let animal={name:"john",feature:"白毛",type:"dog"}
+    //await axios.post(`${base}/adopt/findAnimal`,animal)
+  };
+  return (
+    <TouchableWithoutFeedback
+      onPress={() => {
+        Keyboard.dismiss();
+      }}
+    >
+      <ImageBackground
+        source={require("../../assets/background2.png")}
+        style={styles.container}
+      >
+        <View style={styles.container}>
+          <RecommendPanel />
+          <AnimalPanel />
+        </View>
+      </ImageBackground>
+    </TouchableWithoutFeedback>
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    flexDirection:'column',
+    flexDirection: "column",
     //justifyContent: 'center',
-
   },
 });
