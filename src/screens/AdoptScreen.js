@@ -12,7 +12,6 @@ import {
   ImageBackground,
 } from "react-native";
 import { axios, base } from "../axios";
-import RecommendPanel from "../components/panel/RecommendPanel";
 import AnimalPanel from "../components/panel/AnimalPanel";
 
 export default function AdoptScreen({ navigation }) {
@@ -34,7 +33,6 @@ export default function AdoptScreen({ navigation }) {
         style={styles.container}
       >
         <View style={styles.container}>
-          <RecommendPanel />
           <AnimalPanel />
         </View>
       </ImageBackground>
