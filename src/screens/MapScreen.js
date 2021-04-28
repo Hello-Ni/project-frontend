@@ -13,9 +13,16 @@ import {
   PermissionsAndroid,
 } from "react-native";
 import Geocoder from "react-native-geocoding";
-import MapView, { Marker, Polygon } from "react-native-maps";
+import MapView, {
+  Marker,
+  Polygon,
+  Polyline,
+  Circle,
+  Geojson,
+} from "react-native-maps";
 import { base, axios } from "../axios";
 import { FontAwesome5 } from "@expo/vector-icons";
+import { circle } from "react-native/Libraries/Animated/src/Easing";
 export default function MapWindow({ navigation }) {
   Geocoder.init("AIzaSyDonjbD-iLIzfrKhky6ESfjfTtxso5vJG0"); // use a valid API key
   const [address, setAddress] = useState("");
@@ -53,14 +60,28 @@ export default function MapWindow({ navigation }) {
           longitudeDelta: 0.02,
         };
         setInputLoc(Loc);
-        let region = calculateRectangle(parseFloat(distance), Loc);
+        let region = calculateShape(parseFloat(distance), Loc);
         let res = await axios.post(`${base}/maps/search`, region);
         setMarkers(res.data.data);
       })
       .catch((error) => console.warn(error));
   };
-
-  const calculateRectangle = (distance, loc) => {
+  const tapHandler = async (loc) => {
+    console.log(loc);
+    let newLoc = {
+      latitude: loc.latitude,
+      longitude: loc.longitude,
+      latitudeDelta: 0.02,
+      longitudeDelta: 0.02,
+    };
+    setInputLoc(newLoc);
+    let region = calculateShape(parseFloat(distance), newLoc);
+    console.log(region);
+    let res = await axios.post(`${base}/maps/search`, region);
+    console.log(res.data.data);
+    setMarkers(res.data.data);
+  };
+  const calculateShape = (distance, loc) => {
     let radius = 6371;
     let dis = distance;
     let dlng =
@@ -105,8 +126,17 @@ export default function MapWindow({ navigation }) {
           showsMyLocationButton={true}
           followsUserLocation={true}
           style={styles.map}
+          onPress={(event) => {
+            tapHandler(event.nativeEvent.coordinate);
+          }}
         >
-          <Polygon coordinates={polygons} tappable={true} />
+          {/* <Polygon
+            coordinates={polygons}
+            tappable={true}
+            onPress={() => {
+              console.log("press");
+            }}
+          /> */}
           {markers.map((marker, index) => (
             <Marker
               key={index}
@@ -117,6 +147,10 @@ export default function MapWindow({ navigation }) {
               isPreselected={true}
             />
           ))}
+          <Circle
+            center={inputLoc}
+            radius={parseFloat(distance) * 1000 * (1 / Math.sin(Math.PI / 4))}
+          ></Circle>
         </MapView>
         <View style={styles.showBox}></View>
         <View style={styles.inputBox}>

@@ -15,13 +15,6 @@ import { axios, base } from "../axios";
 import AnimalPanel from "../components/panel/AnimalPanel";
 
 export default function AdoptScreen({ navigation }) {
-  const sendAnimal = async () => {
-    await axios.get(
-      "http://data.coa.gov.tw/Service/OpenData/TransService.aspx?UnitId=QcbUEzN6E6DL"
-    );
-    //let animal={name:"john",feature:"白毛",type:"dog"}
-    //await axios.post(`${base}/adopt/findAnimal`,animal)
-  };
   return (
     <TouchableWithoutFeedback
       onPress={() => {

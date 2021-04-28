@@ -94,7 +94,10 @@ export default function RecommendPanel({}) {
     breed: ["米克斯", "拉布拉多"],
     gender: ["男", "女"],
   });
-  const fetchAnimal = () => {};
+  const fetchAnimal = () => {
+    //console.log("fetch");
+    //axios.post(`${base}/adopt/create`);
+  };
   const handleInputResult = (txt, key) => {
     console.log(txt, key);
     let newSelect = { ...selectAnimal };
