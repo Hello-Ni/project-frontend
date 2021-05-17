@@ -29,6 +29,7 @@ export default function MapWindow({ navigation }) {
   const [distance, setDistance] = useState("1");
   const [polygons, setPolygons] = useState([
     { latitude: 22.997835714925152, longitude: 120.19910163770508 },
+    { latitude: 22.997835714926152, longitude: 120.19910163780508 },
   ]);
   const [inputLoc, setInputLoc] = useState({
     latitude: 22.997800066043517,
@@ -38,16 +39,6 @@ export default function MapWindow({ navigation }) {
   });
   const [markers, setMarkers] = useState([]);
   const [animalDetail, setAnimalDetail] = useState({ showing: false });
-  const pressHandler = () => {
-    navigation.push * "MainWindow";
-  };
-  const testHandler = async () => {
-    let region = calculateRectangle(distance);
-    console.log(region);
-    let res = await axios.post(`${base}/maps/search`, region);
-    setMarkers(res.data.data);
-  };
-
   const submitHandler = async () => {
     //console.log(address)
     await Geocoder.from(address)
@@ -59,6 +50,7 @@ export default function MapWindow({ navigation }) {
           latitudeDelta: 0.02,
           longitudeDelta: 0.02,
         };
+
         setInputLoc(Loc);
         let region = calculateShape(parseFloat(distance), Loc);
         let res = await axios.post(`${base}/maps/search`, region);
@@ -105,7 +97,6 @@ export default function MapWindow({ navigation }) {
       { latitude: rectangle.bottom, longitude: rectangle.right },
       { latitude: rectangle.bottom, longitude: rectangle.left },
     ]);
-    //console.log(polygons)
     return rectangle;
   };
   const selectAnimalView = (target) => {
@@ -130,13 +121,6 @@ export default function MapWindow({ navigation }) {
             tapHandler(event.nativeEvent.coordinate);
           }}
         >
-          {/* <Polygon
-            coordinates={polygons}
-            tappable={true}
-            onPress={() => {
-              console.log("press");
-            }}
-          /> */}
           {markers.map((marker, index) => (
             <Marker
               key={index}
@@ -154,6 +138,12 @@ export default function MapWindow({ navigation }) {
         </MapView>
         <View style={styles.showBox}></View>
         <View style={styles.inputBox}>
+          <Button
+            title="顯示tree"
+            onPress={() => {
+              showRtree();
+            }}
+          />
           <TextInput
             placeholder="請輸入地點"
             onChangeText={(val) => {
