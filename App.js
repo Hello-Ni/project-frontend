@@ -11,8 +11,14 @@ import {
 import Header from "./src/components/header";
 import AddTodo from "./src/components/addTodo";
 import Navigator from "./src/router/homeStack";
-export default function App() {
-  return <Navigator />;
+export default class App extends React.Component {
+  constructor() {
+    super();
+    console.log("fuck");
+  }
+  render() {
+    return <Navigator />;
+  }
 }
 
 const styles = StyleSheet.create({

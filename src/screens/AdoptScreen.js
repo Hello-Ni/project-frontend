@@ -26,7 +26,7 @@ export default function AdoptScreen({ navigation }) {
         style={styles.container}
       >
         <View style={styles.container}>
-          <AnimalPanel />
+          <AnimalPanel navigation={navigation} />
         </View>
       </ImageBackground>
     </TouchableWithoutFeedback>

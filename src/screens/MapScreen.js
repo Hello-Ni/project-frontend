@@ -38,6 +38,7 @@ export default function MapWindow({ navigation }) {
     longitudeDelta: 0.02,
   });
   const [markers, setMarkers] = useState([]);
+  const [details, setDetails] = useState([]);
   const [animalDetail, setAnimalDetail] = useState({ showing: false });
   const submitHandler = async () => {
     //console.log(address)
@@ -70,8 +71,8 @@ export default function MapWindow({ navigation }) {
     let region = calculateShape(parseFloat(distance), newLoc);
     console.log(region);
     let res = await axios.post(`${base}/maps/search`, region);
-    console.log(res.data.data);
-    setMarkers(res.data.data);
+    setMarkers(res.data.places);
+    setDetails(res.data.details);
   };
   const calculateShape = (distance, loc) => {
     let radius = 6371;
@@ -99,9 +100,11 @@ export default function MapWindow({ navigation }) {
     ]);
     return rectangle;
   };
-  const selectAnimalView = (target) => {
-    target.showing = true;
-    setAnimalDetail(target);
+  const selectAnimalView = (target, idx) => {
+    let t = { ...details[idx] };
+    t.showing = true;
+    console.log(t);
+    setAnimalDetail(t);
   };
   return (
     <TouchableWithoutFeedback
@@ -126,8 +129,7 @@ export default function MapWindow({ navigation }) {
               key={index}
               coordinate={{ latitude: marker.lat, longitude: marker.lng }}
               title={marker.type}
-              description={marker.number.toString()}
-              onPress={() => selectAnimalView(marker)}
+              onPress={() => selectAnimalView(marker, index)}
               isPreselected={true}
             />
           ))}
@@ -138,12 +140,6 @@ export default function MapWindow({ navigation }) {
         </MapView>
         <View style={styles.showBox}></View>
         <View style={styles.inputBox}>
-          <Button
-            title="顯示tree"
-            onPress={() => {
-              showRtree();
-            }}
-          />
           <TextInput
             placeholder="請輸入地點"
             onChangeText={(val) => {
@@ -158,10 +154,7 @@ export default function MapWindow({ navigation }) {
         </View>
         {animalDetail.showing && (
           <View style={styles.detailBox}>
-            <Image
-              style={styles.photo}
-              source={require("../../assets/dog.jpg")}
-            />
+            <Image style={styles.photo} source={{ uri: animalDetail.image }} />
             <View>
               <Text>寵物名字:{animalDetail.name}</Text>
               <Text>品種:{animalDetail.type}</Text>
