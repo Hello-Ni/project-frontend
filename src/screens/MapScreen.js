@@ -11,6 +11,7 @@ import {
   Keyboard,
   Image,
   PermissionsAndroid,
+  Switch,
 } from "react-native";
 import Geocoder from "react-native-geocoding";
 import MapView, {
@@ -20,6 +21,7 @@ import MapView, {
   Circle,
   Geojson,
 } from "react-native-maps";
+import ClusterView from "react-native-map-clustering";
 import { base, axios } from "../axios";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { circle } from "react-native/Libraries/Animated/src/Easing";
@@ -34,12 +36,25 @@ export default function MapWindow({ navigation }) {
   const [inputLoc, setInputLoc] = useState({
     latitude: 22.997800066043517,
     longitude: 120.20266576552974,
-    latitudeDelta: 0.02,
-    longitudeDelta: 0.02,
+    latitudeDelta: 0.1,
+    longitudeDelta: 0.1,
   });
   const [markers, setMarkers] = useState([]);
   const [details, setDetails] = useState([]);
   const [animalDetail, setAnimalDetail] = useState({ showing: false });
+  const [isEnabled, setIsEnabled] = useState(false);
+  const toggleSwitch = async () => {
+    setIsEnabled((previousState) => !previousState);
+    console.log(isEnabled);
+    if (!isEnabled) {
+      let res = await axios.get(`${base}/maps/getAllMarker`);
+      setMarkers(res.data.place);
+      setDetails(res.data.detail);
+    } else {
+      setMarkers([]);
+      setDetails([]);
+    }
+  };
   const submitHandler = async () => {
     //console.log(address)
     await Geocoder.from(address)
@@ -65,8 +80,8 @@ export default function MapWindow({ navigation }) {
     let newLoc = {
       latitude: loc.latitude,
       longitude: loc.longitude,
-      latitudeDelta: 0.02,
-      longitudeDelta: 0.02,
+      latitudeDelta: 0.1,
+      longitudeDelta: 0.1,
     };
     setInputLoc(newLoc);
     let region = calculateShape(parseFloat(distance), newLoc);
@@ -115,30 +130,45 @@ export default function MapWindow({ navigation }) {
       }}
     >
       <View style={styles.container}>
-        <MapView
-          initialRegion={inputLoc}
-          showsUserLocation={true}
-          showsMyLocationButton={true}
-          followsUserLocation={true}
-          style={styles.map}
-          onPress={(event) => {
-            tapHandler(event.nativeEvent.coordinate);
-          }}
-        >
-          {markers.map((marker, index) => (
-            <Marker
-              key={index}
-              coordinate={{ latitude: marker.lat, longitude: marker.lng }}
-              title={marker.type}
-              onPress={() => selectAnimalView(marker, index)}
-              isPreselected={true}
-            />
-          ))}
-          <Circle
-            center={inputLoc}
-            radius={parseFloat(distance) * 1000 * (1 / Math.sin(Math.PI / 4))}
-          ></Circle>
-        </MapView>
+        {isEnabled ? (
+          <ClusterView initialRegion={inputLoc} style={styles.map}>
+            {markers.map((marker, index) => (
+              <Marker
+                key={index}
+                coordinate={{ latitude: marker.lat, longitude: marker.lng }}
+                title={marker.type}
+                onPress={() => selectAnimalView(marker, index)}
+                isPreselected={true}
+              />
+            ))}
+          </ClusterView>
+        ) : (
+          <MapView
+            initialRegion={inputLoc}
+            showsUserLocation={true}
+            showsMyLocationButton={true}
+            followsUserLocation={true}
+            style={styles.map}
+            onPress={(event) => {
+              tapHandler(event.nativeEvent.coordinate);
+            }}
+          >
+            {markers.map((marker, index) => (
+              <Marker
+                key={index}
+                coordinate={{ latitude: marker.lat, longitude: marker.lng }}
+                title={marker.type}
+                onPress={() => selectAnimalView(marker, index)}
+                isPreselected={true}
+              />
+            ))}
+            <Circle
+              center={inputLoc}
+              radius={parseFloat(distance) * 1000 * (1 / Math.sin(Math.PI / 4))}
+            ></Circle>
+          </MapView>
+        )}
+
         <View style={styles.showBox}></View>
         <View style={styles.inputBox}>
           <TextInput
@@ -160,13 +190,25 @@ export default function MapWindow({ navigation }) {
               setDistance((parseFloat(distance) + 0.5).toString());
             }}
           ></Button>
-          <Text>{parseFloat(distance)}</Text>
+          <Text>{parseFloat(distance)}km</Text>
           <Button
             title="-"
             onPress={() => {
               setDistance((parseFloat(distance) - 0.5).toString());
             }}
           ></Button>
+        </View>
+        <View style={styles.toggle}>
+          <Text>範圍搜索</Text>
+          <Switch
+            style={{ transform: [{ scaleX: 1.3 }, { scaleY: 1.3 }] }}
+            trackColor={{ false: "#FF7849", true: "#C7C7C7" }}
+            thumbColor={"#F9F9F9"}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={toggleSwitch}
+            value={isEnabled}
+          />
+          <Text>顯示群集</Text>
         </View>
         {animalDetail.showing && (
           <View style={styles.detailBox}>
@@ -228,6 +270,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     top: 80,
     right: 10,
+  },
+  toggle: {
+    position: "absolute",
+    flexDirection: "row",
+    alignItems: "center",
+    top: 80,
+    left: 10,
   },
   photo: {
     height: "60%",
