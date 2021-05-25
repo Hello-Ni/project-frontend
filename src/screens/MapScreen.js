@@ -55,7 +55,8 @@ export default function MapWindow({ navigation }) {
         setInputLoc(Loc);
         let region = calculateShape(parseFloat(distance), Loc);
         let res = await axios.post(`${base}/maps/search`, region);
-        setMarkers(res.data.data);
+        setMarkers(res.data.places);
+        setDetails(res.data.details);
       })
       .catch((error) => console.warn(error));
   };
@@ -152,6 +153,21 @@ export default function MapWindow({ navigation }) {
             <FontAwesome5 name="search" size={20} color="#BEBEBE" />
           </TouchableOpacity>
         </View>
+        <View style={styles.IncDec}>
+          <Button
+            title="+"
+            onPress={() => {
+              setDistance((parseFloat(distance) + 0.5).toString());
+            }}
+          ></Button>
+          <Text>{parseFloat(distance)}</Text>
+          <Button
+            title="-"
+            onPress={() => {
+              setDistance((parseFloat(distance) - 0.5).toString());
+            }}
+          ></Button>
+        </View>
         {animalDetail.showing && (
           <View style={styles.detailBox}>
             <Image style={styles.photo} source={{ uri: animalDetail.image }} />
@@ -204,6 +220,14 @@ const styles = StyleSheet.create({
     paddingLeft: 30,
     borderTopStartRadius: 30,
     borderTopEndRadius: 30,
+  },
+  IncDec: {
+    position: "absolute",
+    flexDirection: "column",
+    //justifyContent: "center",
+    alignItems: "center",
+    top: 80,
+    right: 10,
   },
   photo: {
     height: "60%",

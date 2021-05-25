@@ -13,14 +13,14 @@ export default function RegisterPanel({ inputLoc }) {
     type: "",
     breed: "混種",
     feature: "",
-    owner: "",
+    contactor: "",
     date: "",
     phone: "",
   });
   const [animalText] = useState([
     { text: "寵物名字", placeholder: "輸入名字", key: "name" },
     { text: "寵物特徵", placeholder: "輸入特徵", key: "feature" },
-    { text: "聯絡人", placeholder: "輸入聯絡人", key: "owner" },
+    { text: "聯絡人", placeholder: "輸入聯絡人", key: "contactor" },
   ]);
   const [animalChecked, setAnimalChecked] = useState("dog");
 
@@ -31,7 +31,6 @@ export default function RegisterPanel({ inputLoc }) {
       aspect: [4, 3],
       quality: 1,
     });
-
     console.log(result);
 
     if (!result.cancelled) {
